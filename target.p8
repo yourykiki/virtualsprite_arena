@@ -317,17 +317,6 @@ function debug()
   nb=seq[tot]
  	print("nb "..nb.." next "..(seq[tot+1]or-1),0,0,2)
 		draw_vspr(nb,x,32) x=(x+8)%128--0
---[[		draw_vspr(258,x,32) x+=8--1
-		draw_vspr(260,x,32) x+=8--2
-		draw_vspr(262,x,32) x+=8--3
-		draw_vspr(264,x,32) x+=8--4
-		draw_vspr(266,x,32) x+=8--5
-		draw_vspr(264,x,32) x+=8--4
-		draw_vspr(262,x,32) x+=8--3
-		draw_vspr(260,x,32) x+=8--2
-		draw_vspr(258,x,32) x+=8--1
-	]]--
---d	 print(""..#vsprq,0,0,2)
 	 print("tot "..tot)
 	 spr(0,0,64,16,4)
 	 --flip()
@@ -375,8 +364,8 @@ function tbl2str(tbl)
 end
 
 init()
-bench()
---debug()
+--bench()
+debug()
 __gfx__
 402680cea0cea0cea0ffff8ff7ffff78fd89920bce31cdef52f7ff81ffef92ad34ff199052f18e00ff14dd46f320f118f08a4899ff087aef300f781e44d32af1
 c892ffcf78019c8f21745ef09efb3b2afaeed95778a0b3c229848e299432299c808337df83ceea93f3d7400bee3034aa02780301d1734fe770921ccf8ccf1eec

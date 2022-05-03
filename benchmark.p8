@@ -47,7 +47,7 @@ local vsprtbl,vsprq
 function vspr16(nspr,x,y)
  local nxtspr
  --nspr in cache ?
- if vsprtbl[nspr]!=nil then
+ if vsprtbl[nspr] then
   --yes update age queue
   ldel(vsprq,nspr)--d
   laddlast(vsprq,nspr)--d
@@ -66,12 +66,13 @@ function vspr16(nspr,x,y)
   laddlast(vsprq,nspr)--d
   vsprtbl[nspr]=nxtspr
   --copy sprite in spritesheet
-  local dst,src=
-   0x0000+nxtspr\8*1024+nxtspr%8*8,
-   0x8000+nspr\8*1024+nspr%8*8
-  for i=0,15 do
-   memcpy(dst+i*64,src+i*64,8)
-  end
+	 local src,dst=
+	  0x8000+nspr\8*1024+nspr%8*8,
+	  nxtspr\8*1024+nxtspr%8*8
+	 for i=0,960,64 do
+	--  memcpy(i,src+i,8)
+	  poke4(dst+i,$(src+i),$(src+i+4))
+	 end
  end
  --draw 16x16 spr 
  local ns=nxtspr%8*2+nxtspr\8*32
@@ -83,7 +84,7 @@ end
 --update prev/next pointers
 function ldel(tbl,ielt)
  local o=tbl[ielt]
- if (o==nil) return
+-- if (o==nil) return
  --delete first ? update first
  if (tbl.f==ielt) tbl.f=o.n
  --delete last ? update last
@@ -116,7 +117,7 @@ end
 function vspr16nat(nspr,x,y)
  local nxtspr
  --nspr in cache ?
- if vsprtbl[nspr]!=nil then
+ if vsprtbl[nspr] then
   --yes update age queue
   del(vsprq,nspr)
   add(vsprq,nspr)
@@ -134,12 +135,13 @@ function vspr16nat(nspr,x,y)
   add(vsprq,nspr)
   vsprtbl[nspr]=nxtspr
   --copy sprite in spritesheet
-  local dst,src=
-   0x0000+nxtspr\8*1024+nxtspr%8*8,
-   0x8000+nspr\8*1024+nspr%8*8
-  for i=0,15 do
-   memcpy(dst+i*64,src+i*64,8)
-  end
+	 local src,dst=
+	  0x8000+nspr\8*1024+nspr%8*8,
+	  nxtspr\8*1024+nxtspr%8*8
+	 for i=0,960,64 do
+	--  memcpy(i,src+i,8)
+	  poke4(dst+i,$(src+i),$(src+i+4))
+	 end
  end
  --draw 16x16 spr 
  local ns=nxtspr%8*2+nxtspr\8*32
@@ -151,7 +153,7 @@ end
 function vspr8(nspr,x,y)
  local nxtspr
  --nspr in cache ?
- if vsprtbl[nspr]!=nil then
+ if vsprtbl[nspr] then
   --yes update age queue
   ldel(vsprq,nspr)--d
   laddlast(vsprq,nspr)--d
@@ -170,11 +172,12 @@ function vspr8(nspr,x,y)
   laddlast(vsprq,nspr)--d
   vsprtbl[nspr]=nxtspr
   --copy sprite in spritesheet
-  local dst,src=
-   0x0000+(nxtspr\16)*512+nxtspr%16*4,
-   0x8000+(nspr\16)*512+nspr%16*4
-  for i=0,7 do
-   memcpy(dst+i*64,src+i*64,4)
+  --jadelombax style
+  local src,dst=
+   32768+nspr\16*512+nspr%16*4,
+   nxtspr\16*512+nxtspr%16*4
+  for i=0,448,64 do
+   poke4(dst+i,$(src+i))
   end
  end
  --draw spr 8x8 spr
@@ -186,7 +189,7 @@ end
 function vspr8nat(nspr,x,y)
  local nxtspr
  --nspr in cache ?
- if vsprtbl[nspr]!=nil then
+ if vsprtbl[nspr] then
   --yes update age queue
   del(vsprq,nspr)
   add(vsprq,nspr)
@@ -204,11 +207,12 @@ function vspr8nat(nspr,x,y)
   add(vsprq,nspr)
   vsprtbl[nspr]=nxtspr
   --copy sprite in spritesheet
-  local dst,src=
-   0x0000+(nxtspr\16)*512+nxtspr%16*4,
-   0x8000+(nspr\16)*512+nspr%16*4
-  for i=0,7 do
-   memcpy(dst+i*64,src+i*64,4)
+  --jadelombax style
+  local src,dst=
+   32768+nspr\16*512+nspr%16*4,
+   nxtspr\16*512+nxtspr%16*4
+  for i=0,448,64 do
+   poke4(i,$(src+i))
   end
  end
  --draw spr
@@ -216,32 +220,40 @@ function vspr8nat(nspr,x,y)
 end
 
 --vspr with 8x8 sprite
---no cache
+--no cache/memcpy
 function vspr8nc(nspr,x,y)
- local nxtspr=0
  --copy sprite in spritesheet
- local dst,src=
-  0x0000+(nxtspr\16)*512+nxtspr%16*4,
-  0x8000+(nspr\16)*512+nspr%16*4
- for i=0,7 do
-  memcpy(dst+i*64,src+i*64,4)
+ local src=
+  0x8000+nspr\16*512+nspr%16*4
+ for i=0,448,64 do
+  memcpy(i,src+i,4)
+--  poke4(i,$(src+i))
  end
  --draw spr 8x8 spr
- spr(nxtspr,x,y)
+ spr(0,x,y)
 end
 
+--vspr with 16x16 sprite
+--no cache/poke4
 function vspr16nc(nspr,x,y)
- local nxtspr=0
  --copy sprite in spritesheet
- local dst,src=
-  0x0000+nxtspr\8*1024+nxtspr%8*8,
+ local src=
   0x8000+nspr\8*1024+nspr%8*8
- for i=0,15 do
-  memcpy(dst+i*64,src+i*64,8)
+ for i=0,960,64 do
+--  memcpy(i,src+i,8)
+  poke4(i,$(src+i),$(src+i+4))
  end
  --draw 16x16 spr 
- local ns=nxtspr%8*2+nxtspr\8*32
- spr(ns,x,y,2,2)
+ spr(0,x,y,2,2)
+end
+
+--jade lombax 
+function vspr(n,x,y)
+ local ssp=32768+n\16*512+n%16*4
+ for i=0,448,64 do
+  poke4(i,$(ssp+i))
+ end
+ spr(0,x,y)
 end
 -->8
 -- px9 decompress
@@ -365,7 +377,8 @@ end
 function bench(vspr_fn,data)
  cls()
  --reinit cache info
- hit,tot,vsprtbl,vsprq=0,0,{},{len=0}
+ hit,tot,vsprtbl,vsprq=
+  0,0,{},{len=0}
  local btime=stat(1)
  for i=1,#data do
   local nb,x,y=
@@ -404,8 +417,9 @@ local benchs={
  {n="vspr16nat",f=vspr16nat,d=ben16f},
  {n="vspr8    ",f=vspr8,d=ben8f},
  {n="vspr8nat ",f=vspr8nat,d=ben8f},
- {n="vspr8nc  ",f=vspr8nc,d=ben8},
- {n="vspr16nc ",f=vspr16nc,d=ben16}
+ {n="vspr16nc ",f=vspr16nc,d=ben16},
+ {n="vsprmemcpy",f=vspr8nc,d=ben8},
+ {n="jadelombax",f=vspr,d=ben8},
 }
 
 local bench_res={}
@@ -421,15 +435,18 @@ function bprint(str,x,y)
  end
  print(str,x,y,7)
 end
-bprint("ratio   speed",48,24)
+bprint("ratio  speed time",48,16)
 for i=1,#bench_res do
- local res=bench_res[i]
- bprint(benchs[i].n..
-  "  "..res.ratio,4,32+i*8)
- bprint(res.spd,80,32+i*8)
+ local res,y=bench_res[i],24+i*8
+ bprint(benchs[i].n,4,y)
+ bprint(res.ratio,48,y)
+ bprint(res.spd\1,78,y)
+ bprint(res.btime,102,y)
 end
 
 repeat until btnp(❎)
+
+
 __gfx__
 402680cea0cea0cea0ffff8ff7ffff78fd89920bce31cdef52f7ff81ffef92ad34ff199052f18e00ff14dd46f320f118f08a4899ff087aef300f781e44d32af1
 c892ffcf78019c8f21745ef09efb3b2afaeed95778a0b3c229848e299432299c808337df83ceea93f3d7400bee3034aa02780301d1734fe770921ccf8ccf1eec
