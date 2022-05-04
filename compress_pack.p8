@@ -1,8 +1,9 @@
 pico-8 cartridge // http://www.pico-8.com
 version 35
 __lua__
--- utility cartridge
+-- Utility cartridge
 -- pack gfx from pack1-4 cart
+-- then store data to target.p8
 
 w,h=128,128
 raw_size=(w*h+1)\2 -- bytes
