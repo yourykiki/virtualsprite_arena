@@ -98,7 +98,7 @@ function draw_vspr(nspr,x,y)
  if vsprtbl[nspr]!=nil then
   --yes update age queue
   del(vsprq,nspr)
-  add(vsprq,nspr)
+  vsprq[#vsprq+1]=nspr
   nxtspr=vsprtbl[nspr]
   hit+=1
 --debug  ?"update age queue"
@@ -112,7 +112,7 @@ function draw_vspr(nspr,x,y)
 	  vsprtbl[o]=nil
 --debug   ?"remove first"
 	 end
-  add(vsprq,nspr)
+  vsprq[#vsprq+1]=nspr
   vsprtbl[nspr]=nxtspr
 --debug  ?"add last"
   --copy 
@@ -296,8 +296,8 @@ function debug()
 	
 	 rectfill(0,96,127,127,0)
 	 color(2)
-	 print("len "..vsprq.len,0,96)
-	 print("f "..vsprq.f.." ".." l "..vsprq.l)
+--	 print("len "..vsprq.len,0,96)
+--	 print("f "..vsprq.f.." ".." l "..vsprq.l)
 	 print(llist2str(vsprq))
 	 print(llist2str_rev(vsprq))
 	 flip()
@@ -330,8 +330,8 @@ end
 
 
 init()
-bench()
---debug()
+--bench()
+debug()
 __gfx__
 402680cea0cea0cea0ffff8ff7ffff78fd89920bce31cdef52f7ff81ffef92ad34ff199052f18e00ff14dd46f320f118f08a4899ff087aef300f781e44d32af1
 c892ffcf78019c8f21745ef09efb3b2afaeed95778a0b3c229848e299432299c808337df83ceea93f3d7400bee3034aa02780301d1734fe770921ccf8ccf1eec

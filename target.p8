@@ -124,10 +124,10 @@ function draw_vspr(nspr,x,y)
 --debug  ?"add last"
   --copy 
   local dst,src=
-   0x0000+(nxtspr\16)*512+nxtspr%16*4,
+   nxtspr\16*512+nxtspr%16*4,
    0x8000+(nspr\16)*512+nspr%16*4
-  for i=0,7 do
-   memcpy(dst+i*64,src+i*64,4)
+  for i=0,448,64 do
+   poke4(dst+i,$(src+i))
   end
  end
  --draw spr
@@ -138,7 +138,6 @@ end
 function ldel(tbl,ielt)
 --debug print("del "..ielt)
  local o=tbl[ielt]
- if (o==nil) return
  --delete first ? update first
  if (tbl.f==ielt) tbl.f=o.n
  --delete last ? update last
@@ -364,8 +363,8 @@ function tbl2str(tbl)
 end
 
 init()
---bench()
-debug()
+bench()
+--debug()
 __gfx__
 402680cea0cea0cea0ffff8ff7ffff78fd89920bce31cdef52f7ff81ffef92ad34ff199052f18e00ff14dd46f320f118f08a4899ff087aef300f781e44d32af1
 c892ffcf78019c8f21745ef09efb3b2afaeed95778a0b3c229848e299432299c808337df83ceea93f3d7400bee3034aa02780301d1734fe770921ccf8ccf1eec
